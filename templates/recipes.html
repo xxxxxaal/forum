@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рецепты</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .recipe-photo-placeholder {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f2f2f2;
+            color: #999;
+            font-size: 48px;
+        }
+        .recipe-photo {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/"><i class="fas fa-home"></i> Главная</a></li>
+                <li><a href="/about"><i class="fas fa-info-circle"></i> О нас</a></li>
+                <li><a href="/recipes" class="active"><i class="fas fa-utensils"></i> Рецепты</a></li>
+                {{if .Username}}
+                <li>
+                    <a href="/profile" class="profile-link">
+                        <i class="fas fa-user-circle"></i>
+                        {{.Username}}
+                    </a>
+                </li>
+                <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Выход</a></li>
+                {{else}}
+                <li><a href="/login"><i class="fas fa-sign-in-alt"></i> Вход</a></li>
+                <li><a href="/register"><i class="fas fa-user-plus"></i> Регистрация</a></li>
+                {{end}}
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="recipes-header">
+            <h1><i class="fas fa-utensils"></i> Рецепты</h1>
+            {{if .Username}}
+            <a href="/add_recipe" class="button">
+                <i class="fas fa-plus"></i> Добавить рецепт
+            </a>
+            {{end}}
+        </div>
+
+        {{if .Recipes}}
+        <div class="recipes-grid">
+            {{range .Recipes}}
+            <div class="recipe-card">
+                <div class="recipe-image">
+                    {{if .photo}}
+                    <img src="/{{.photo}}" alt="{{.title}}" class="recipe-photo" onerror="this.onerror=null; this.src='/static/placeholder.jpg'; console.log('Ошибка загрузки изображения: {{.photo}}');">
+                    {{else}}
+                    <div class="recipe-photo-placeholder">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    {{end}}
+                </div>
+                <div class="recipe-content">
+                    <h2>{{.title}}</h2>
+                    <div class="recipe-meta">
+                        <span class="author">
+                            <i class="fas fa-user"></i> {{.author}}
+                        </span>
+                        <span class="date">
+                            <i class="fas fa-calendar"></i> {{.created_at}}
+                        </span>
+                    </div>
+                    
+                    <div class="recipe-details">
+                        <div class="ingredients">
+                            <h3><i class="fas fa-list"></i> Ингредиенты:</h3>
+                            <p style="white-space: pre-line;">{{.ingredients}}</p>
+                        </div>
+                        <div class="instructions">
+                            <h3><i class="fas fa-tasks"></i> Инструкции:</h3>
+                            <p style="white-space: pre-line;">{{.instructions}}</p>
+                        </div>
+                    </div>
+
+                    <div class="recipe-actions">
+                        <div class="reactions">
+                            <form action="/add_reaction" method="POST" class="reaction-form">
+                                <input type="hidden" name="recipe_id" value="{{.id}}">
+                                <input type="hidden" name="type" value="like">
+                                <button type="submit" class="reaction-button {{if .user_liked}}active{{end}}">
+                                    <i class="fas fa-thumbs-up"></i>
+                                    <span>{{.likes}}</span>
+                                </button>
+                            </form>
+                            <form action="/add_reaction" method="POST" class="reaction-form">
+                                <input type="hidden" name="recipe_id" value="{{.id}}">
+                                <input type="hidden" name="type" value="dislike">
+                                <button type="submit" class="reaction-button {{if .user_disliked}}active{{end}}">
+                                    <i class="fas fa-thumbs-down"></i>
+                                    <span>{{.dislikes}}</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        {{if eq .user_id $.CurrentUserID}}
+                        <form action="/delete_recipe" method="POST" class="delete-form">
+                            <input type="hidden" name="recipe_id" value="{{.id}}">
+                            <button type="submit" class="button delete-button">
+                                <i class="fas fa-trash"></i> Удалить
+                            </button>
+                        </form>
+                        {{end}}
+                    </div>
+
+                    <div class="comments-section">
+                        <h3><i class="fas fa-comments"></i> Комментарии</h3>
+                        {{if .Comments}}
+                        <div class="comments-list">
+                            {{range .Comments}}
+                            <div class="comment">
+                                <div class="comment-header">
+                                    <span class="comment-author">
+                                        <i class="fas fa-user-circle"></i> {{.username}}
+                                    </span>
+                                    <span class="comment-date">{{.created_at}}</span>
+                                </div>
+                                <p class="comment-content">{{.content}}</p>
+                            </div>
+                            {{end}}
+                        </div>
+                        {{else}}
+                        <p class="no-comments">Пока нет комментариев</p>
+                        {{end}}
+
+                        {{if $.Username}}
+                        <form action="/add_comment" method="POST" class="comment-form">
+                            <input type="hidden" name="recipe_id" value="{{.id}}">
+                            <textarea name="content" placeholder="Добавьте комментарий..." required></textarea>
+                            <button type="submit" class="button">
+                                <i class="fas fa-paper-plane"></i> Отправить
+                            </button>
+                        </form>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+            {{end}}
+        </div>
+        {{else}}
+        <div class="empty-state">
+            <i class="fas fa-utensils"></i>
+            <p>Пока нет рецептов</p>
+            {{if .Username}}
+            <a href="/add_recipe" class="button">Добавить первый рецепт</a>
+            {{else}}
+            <a href="/register" class="button">Зарегистрируйтесь, чтобы добавить рецепт</a>
+            {{end}}
+        </div>
+        {{end}}
+    </main>
+    <script>
+    // Добавляем отладочную информацию
+    document.addEventListener('DOMContentLoaded', function() {
+        const images = document.querySelectorAll('.recipe-photo');
+        images.forEach(img => {
+            console.log('Загружаем изображение:', img.src);
+            
+            img.addEventListener('load', function() {
+                console.log('Изображение успешно загружено:', this.src);
+            });
+            
+            img.addEventListener('error', function() {
+                console.error('Ошибка загрузки изображения:', this.src);
+            });
+        });
+    });
+    </script>
+</body>
+</html>

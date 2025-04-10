@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Понравившиеся рецепты</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Главная</a></li>
+                <li><a href="/about">О нас</a></li>
+                <li><a href="/recipes">Рецепты</a></li>
+                {{if .Username}}
+                <li><a href="/profile">Профиль</a></li>
+                <li><a href="/logout">Выйти</a></li>
+                {{else}}
+                <li><a href="/login">Вход</a></li>
+                <li><a href="/register">Регистрация</a></li>
+                {{end}}
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Понравившиеся рецепты</h1>
+        {{range .Favorites}}
+        <div class="recipe">
+            <h2>{{.title}}</h2>
+            {{if .photo}}
+            <img src="/{{.photo}}" alt="{{.title}}" class="recipe-photo">
+            {{end}}
+            <h3>Ингредиенты:</h3>
+            <p>{{.ingredients}}</p>
+            <h3>Инструкции:</h3>
+            <p>{{.instructions}}</p>
+            <form action="/remove_favorite" method="post">
+                <input type="hidden" name="recipe_id" value="{{.id}}">
+                <button type="submit">Удалить из понравившихся</button>
+            </form>
+        </div>
+        {{else}}
+        <p>Нет понравившихся рецептов.</p>
+        {{end}}
+    </main>
+</body>
+</html>

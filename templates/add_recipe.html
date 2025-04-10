@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить рецепт</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/"><i class="fas fa-home"></i> Главная</a></li>
+                <li><a href="/about"><i class="fas fa-info-circle"></i> О нас</a></li>
+                <li><a href="/recipes"><i class="fas fa-utensils"></i> Рецепты</a></li>
+                {{if .Username}}
+                <li>
+                    <a href="/profile" class="profile-link">
+                        <i class="fas fa-user-circle"></i>
+                        {{.Username}}
+                    </a>
+                </li>
+                <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Выход</a></li>
+                {{else}}
+                <li><a href="/login"><i class="fas fa-sign-in-alt"></i> Вход</a></li>
+                <li><a href="/register"><i class="fas fa-user-plus"></i> Регистрация</a></li>
+                {{end}}
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="form-container">
+            <h1><i class="fas fa-plus-circle"></i> Добавить новый рецепт</h1>
+            <form action="/add_recipe" method="post" enctype="multipart/form-data" class="recipe-form">
+                <div class="form-group">
+                    <label for="title">
+                        <i class="fas fa-heading"></i> Название рецепта
+                    </label>
+                    <input type="text" id="title" name="title" required 
+                           placeholder="Например: Домашняя пицца">
+                </div>
+
+                <div class="form-group">
+                    <label for="ingredients">
+                        <i class="fas fa-list"></i> Ингредиенты
+                    </label>
+                    <textarea id="ingredients" name="ingredients" required
+                              placeholder="Перечислите ингредиенты, каждый с новой строки"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="instructions">
+                        <i class="fas fa-tasks"></i> Инструкции по приготовлению
+                    </label>
+                    <textarea id="instructions" name="instructions" required
+                              placeholder="Опишите пошагово процесс приготовления"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="photo" class="file-upload-label">
+                        <i class="fas fa-camera"></i> Фотография блюда
+                        <span class="optional-text">(необязательно)</span>
+                    </label>
+                    <div class="file-upload-container">
+                        <input type="file" id="photo" name="photo" accept="image/*" 
+                               class="file-upload-input">
+                        <div class="file-upload-placeholder">
+                            <i class="fas fa-upload"></i>
+                            <span>Перетащите фото сюда или кликните для выбора</span>
+                        </div>
+                        <div class="file-preview" style="display: none;">
+                            <img id="preview-image" src="#" alt="Предпросмотр">
+                            <button type="button" class="remove-image">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="button submit-button">
+                        <i class="fas fa-plus"></i> Добавить рецепт
+                    </button>
+                    <a href="/recipes" class="button cancel-button">
+                        <i class="fas fa-times"></i> Отмена
+                    </a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        // Предпросмотр изображения
+        document.getElementById('photo').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('preview-image');
+                    preview.src = e.target.result;
+                    document.querySelector('.file-upload-placeholder').style.display = 'none';
+                    document.querySelector('.file-preview').style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Удаление изображения
+        document.querySelector('.remove-image').addEventListener('click', function() {
+            document.getElementById('photo').value = '';
+            document.querySelector('.file-upload-placeholder').style.display = 'flex';
+            document.querySelector('.file-preview').style.display = 'none';
+        });
+
+        // Drag and drop функциональность
+        const dropZone = document.querySelector('.file-upload-container');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            dropZone.classList.add('highlight');
+        }
+
+        function unhighlight(e) {
+            dropZone.classList.remove('highlight');
+        }
+
+        dropZone.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const file = dt.files[0];
+            const fileInput = document.getElementById('photo');
+            
+            fileInput.files = dt.files;
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('preview-image');
+                    preview.src = e.target.result;
+                    document.querySelector('.file-upload-placeholder').style.display = 'none';
+                    document.querySelector('.file-preview').style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+</body>
+</html>

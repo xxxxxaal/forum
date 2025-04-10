@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/"><i class="fas fa-home"></i> Главная</a></li>
+                <li><a href="/about"><i class="fas fa-info-circle"></i> О нас</a></li>
+                <li><a href="/recipes"><i class="fas fa-utensils"></i> Рецепты</a></li>
+                {{if .Username}}
+                <li><a href="/profile"><i class="fas fa-user"></i> Профиль</a></li>
+                <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
+                {{else}}
+                <li><a href="/login"><i class="fas fa-sign-in-alt"></i> Вход</a></li>
+                <li><a href="/register" class="active"><i class="fas fa-user-plus"></i> Регистрация</a></li>
+                {{end}}
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="auth-form">
+            <h1>Создание аккаунта</h1>
+            {{if .Error}}
+            <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i> {{.Error}}
+            </div>
+            {{end}}
+            <form action="/register" method="post">
+                <div class="form-group">
+                    <label for="username"><i class="fas fa-user"></i> Имя пользователя</label>
+                    <input type="text" id="username" name="username" required placeholder="Придумайте имя пользователя">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> Пароль</label>
+                    <input type="password" id="password" name="password" required placeholder="Придумайте надежный пароль">
+                </div>
+                
+                <button type="submit"><i class="fas fa-user-plus"></i> Зарегистрироваться</button>
+            </form>
+            <p>Уже есть аккаунт? <a href="/login">Войти</a></p>
+        </div>
+    </main>
+</body>
+</html>

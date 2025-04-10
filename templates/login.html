@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/"><i class="fas fa-home"></i> Главная</a></li>
+                <li><a href="/about"><i class="fas fa-info-circle"></i> О нас</a></li>
+                <li><a href="/recipes"><i class="fas fa-utensils"></i> Рецепты</a></li>
+                {{if .Username}}
+                <li><a href="/profile"><i class="fas fa-user"></i> Профиль</a></li>
+                <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
+                {{else}}
+                <li><a href="/login" class="active"><i class="fas fa-sign-in-alt"></i> Вход</a></li>
+                <li><a href="/register"><i class="fas fa-user-plus"></i> Регистрация</a></li>
+                {{end}}
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="auth-form">
+            <h1>Вход в аккаунт</h1>
+            <form action="/login" method="post">
+                <div class="form-group">
+                    <label for="username"><i class="fas fa-user"></i> Имя пользователя</label>
+                    <input type="text" id="username" name="username" required placeholder="Введите имя пользователя">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> Пароль</label>
+                    <input type="password" id="password" name="password" required placeholder="Введите пароль">
+                </div>
+                
+                <button type="submit"><i class="fas fa-sign-in-alt"></i> Войти</button>
+            </form>
+            <p>Еще нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
+        </div>
+    </main>
+</body>
+</html>

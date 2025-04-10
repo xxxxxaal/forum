@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль - {{.Username}}</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/"><i class="fas fa-home"></i> Главная</a></li>
+                <li><a href="/about"><i class="fas fa-info-circle"></i> О нас</a></li>
+                <li><a href="/recipes"><i class="fas fa-utensils"></i> Рецепты</a></li>
+                <li>
+                    <a href="/profile" class="profile-link active">
+                        <i class="fas fa-user-circle"></i>
+                        {{.Username}}
+                    </a>
+                </li>
+                <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Выход</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="profile-header">
+            <div class="profile-info">
+                <i class="fas fa-user-circle profile-avatar"></i>
+                <h1>Профиль пользователя {{.Username}}</h1>
+            </div>
+            <div class="profile-actions">
+                <a href="/add_recipe" class="button">
+                    <i class="fas fa-plus"></i> Добавить рецепт
+                </a>
+            </div>
+        </div>
+
+        <div class="profile-content">
+            <h2><i class="fas fa-heart"></i> Избранные рецепты</h2>
+            {{if .Favorites}}
+            <div class="recipes-grid">
+                {{range .Favorites}}
+                <div class="recipe">
+                    {{if .photo}}
+                    <img src="/{{.photo}}" alt="{{.title}}" class="recipe-photo">
+                    {{else}}
+                    <div class="recipe-photo-placeholder">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    {{end}}
+                    <h3>{{.title}}</h3>
+                    <div class="recipe-actions">
+                        <form action="/remove_favorite" method="POST" style="display: inline;">
+                            <input type="hidden" name="recipe_id" value="{{.id}}">
+                            <button type="submit" class="button">
+                                <i class="fas fa-heart-broken"></i> Удалить из избранного
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+            {{else}}
+            <div class="empty-state">
+                <i class="fas fa-heart-broken"></i>
+                <p>У вас пока нет избранных рецептов</p>
+                <a href="/recipes" class="button">Найти рецепты</a>
+            </div>
+            {{end}}
+        </div>
+    </main>
+</body>
+</html>

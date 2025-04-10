@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/"><i class="fas fa-home"></i> Главная</a></li>
+                <li><a href="/about"><i class="fas fa-info-circle"></i> О нас</a></li>
+                <li><a href="/recipes"><i class="fas fa-utensils"></i> Рецепты</a></li>
+                {{if .Username}}
+                <li>
+                    <a href="/profile" class="profile-link">
+                        <i class="fas fa-user-circle"></i>
+                        {{.Username}}
+                    </a>
+                </li>
+                <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Выход</a></li>
+                {{else}}
+                <li><a href="/login"><i class="fas fa-sign-in-alt"></i> Вход</a></li>
+                <li><a href="/register"><i class="fas fa-user-plus"></i> Регистрация</a></li>
+                {{end}}
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="hero">
+            <h1>Добро пожаловать в мир вкусных рецептов!</h1>
+            <p>Откройте для себя новые кулинарные шедевры и поделитесь своими любимыми рецептами</p>
+            {{if .Username}}
+            <div class="button-container">
+                <a href="/add_recipe" class="button"><i class="fas fa-plus"></i> Добавить рецепт</a>
+                <a href="/favorites" class="button"><i class="fas fa-heart"></i> Избранное</a>
+            </div>
+            {{else}}
+            <div class="button-container">
+                <a href="/register" class="button"><i class="fas fa-user-plus"></i> Присоединиться</a>
+            </div>
+            {{end}}
+        </div>
+    </main>
+</body>
+</html>
